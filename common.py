@@ -27,3 +27,11 @@ def get_all_params():
 
 def res_success(data=[], msg='成功', code=200):
     return jsonify({"code": code, "msg": msg, "message": msg, "data": data})
+
+def res_error(data=[], msg='失败', code=500):
+    if msg == '失败':
+        if code == 422:
+            msg = "参数错误"
+        if code == 400:
+            msg = "通用错误"
+    return jsonify({"code": code, "msg": msg, "message": msg, "data": data})

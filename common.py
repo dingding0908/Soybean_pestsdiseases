@@ -35,3 +35,10 @@ def res_error(data=[], msg='失败', code=500):
         if code == 400:
             msg = "通用错误"
     return jsonify({"code": code, "msg": msg, "message": msg, "data": data})
+
+# import tensorflow as tf
+# from tensorflow import keras
+# from tensorflow.keras import layers
+# from matplotlib import pyplot as plt
+# from IPython.display import clear_output
+# import tensorflow_hub as hub

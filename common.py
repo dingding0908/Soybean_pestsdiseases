@@ -40,21 +40,19 @@ import tensorflow as tf
 import tensorflow_hub as hub
 from tensorflow import keras
 from tensorflow.keras import layers
-from tensorflow.keras.preprocessing import image
 import numpy as np
-from tensorflow.keras.applications.resnet50 import  preprocess_input, decode_predictions
+from PIL import Image
 def idenftify_disease(img_path):
     custom_objects={'KerasLayer': hub.KerasLayer}
     saved_model_path = r"E:\Desktop\GIT\datasciencestudy\17 DeepLearning\renn50_1123.h5"  # 将路径替换为你实际保存模型的路径
     model=keras.models.load_model(saved_model_path,custom_objects=custom_objects)
-    class_names = ['MossaicVirus','SouthernBlight','SuddenDeathSyndrone','YellowMosaic','bacterial_blight','brown_spot','crestamento','ferrugen','powdery_mildew','septoria']
-    img = image.load_img(img_path, target_size=(224, 224))
-    img_array = image.img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0)
-    img_array = preprocess_input(img_array)
-    predictions = model.predict(img_array)
+    class_names = ['Mossaic Virus','Southern blight','Sudden Death Syndrone','Yellow Mosaic','bacterial_blight','brown_spot','crestamento','ferrugen','powdery_mildew','septoria']
+    img = Image.open(img_path).resize((224, 224))
+    img_array = np.array(img)
+    img_array1 = np.expand_dims(img_array, axis=0)
+    normalization = layers.Rescaling(1 / 255.)
+    images_normalized = normalization(img_array1)
+    predictions = model.predict(images_normalized)
+    print('predictions',predictions[0])
     max_index = np.argmax(predictions)
-    print('最大值：',predictions)
-    if predictions.max()<0.4:
-        return 'other_harmful'
     return class_names[max_index]

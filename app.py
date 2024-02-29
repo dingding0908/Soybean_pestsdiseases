@@ -1,5 +1,6 @@
 from flask import Flask, request
-from common import res_success, get_all_params, md5_file, save_uploaded_file, res_error, idenftify_disease,linear_mapping
+from common import res_success, get_all_params, md5_file, save_uploaded_file, res_error, idenftify_disease, \
+    linear_mapping, idenftify_crab_disease
 import os
 from sqlalchemy import create_engine, text
 from flask_cors import CORS
@@ -74,19 +75,20 @@ def identify_soybeanharmful():
     return app.success(aa[::-1])
 
 @app.route('/crab_identifyharmful',methods=["POST"])
-def identify_soybeanharmful():
+def identify_crabharmful():
     if request.method == 'POST':
         rootpath = r'\\DESKTOP-OSKGC5P\GISDATA_share\upload'
         file = request.files['image_url']
+        print(file.filename)
         img_md5 = md5_file(file)
         file.seek(0)  # 生成MD5时候图片索引读取到最后，重新指向图片开头，保存文件。
-        upload_folder = os.path.join(rootpath, 'soybean')
+        upload_folder = os.path.join(rootpath, 'crab')
         os.makedirs(upload_folder, exist_ok=True)
         img_path = os.path.join(upload_folder.split('DESKTOP-OSKGC5P')[1][1:],
                                 img_md5 + '.' + file.filename.split('.')[-1])
         save_uploaded_file(file, upload_folder, img_md5 + '.' + file.filename.split('.')[-1])
         print('img-path:',os.path.join(r'D:/',img_path).replace('\\','/'))
-        class_names ,predictions_values= idenftify_disease(os.path.join(r'D:/',img_path).replace('\\','/'))
+        class_names ,predictions_values= idenftify_crab_disease(os.path.join(r'D:/',img_path).replace('\\','/'))
         print('class_name',class_names,predictions_values)
         aa=[]
         for item in zip(class_names,predictions_values):
@@ -107,7 +109,9 @@ def identify_soybeanharmful():
                 data['alias']=harmful_name
                 del data['id']
             aa.append(data)
-        if aa[2]['predictions_value']<0.6:
+        # print(isinstance(str,aa[2]['predi   ctions_value']))
+        print(aa[2]['predictions_value'])
+        if float(aa[2]['predictions_value'])<0.6:
             print('<0.6',aa[2]['predictions_value'])
             mapped_value=linear_mapping(aa[2]['predictions_value'], 0.6, 0.7)
             aa[2]['predictions_value']=mapped_value

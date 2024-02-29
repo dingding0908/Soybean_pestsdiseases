@@ -89,6 +89,28 @@ def idenftify_crab_disease(img_path):
     predictions_value=list(predictions[0][list(index[0][-3:])])
     return class_name,predictions_value
 
+def idenftify_rice_disease(img_path):
+    custom_objects={'KerasLayer': hub.KerasLayer}
+    saved_model_path = r"E:\Desktop\2024年全年\202402\09RiceIdentityHarmful\renn50_0229_v1.h5" # 将路径替换为你实际保存模型的路径
+    model=keras.models.load_model(saved_model_path,custom_objects=custom_objects)
+    class_names =np.array( ['bacterial_leaf_blight', 'brown_spot', 'healthy', 'leaf_blast',
+                  'leaf_scald', 'narrow_brown_spot', 'neck_blast', 'rice_hispa', 'sheath_blight', 'tungro'])
+    # class_names =np.array(['Mossaic Virus','Southern blight','Sudden Death Syndrone','Yellow Mosaic','bacterial_blight','brown_spot','crestamento','ferrugen','powdery_mildew','septoria'])
+    img = Image.open(img_path).resize((224, 224))
+    img_array = np.array(img)
+    if len(img_array.shape)==2:
+        img_array=img.convert('RGB')
+    img_array1 = np.expand_dims(img_array, axis=0)
+    normalization = layers.Rescaling(1 / 255.)
+    images_normalized = normalization(img_array1)
+    predictions = model.predict(images_normalized)
+    # max_index = np.argmax(predictions)
+    # max=class_names[max_index]
+    index = np.argsort(predictions)
+    class_name=list(class_names[list(index[0][-3:])])
+    predictions_value=list(predictions[0][list(index[0][-3:])])
+    return class_name,predictions_value
+
 
 # 线性映射
 def linear_mapping(x, new_min, new_max):

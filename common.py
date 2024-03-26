@@ -3,6 +3,8 @@ import hashlib
 from flask import request, jsonify
 import os
 
+from selenium.common.exceptions import TimeoutException
+
 
 def md5_file(file):
     md5 = hashlib.md5()
@@ -164,8 +166,12 @@ def Getdisease(img_path):
     # time.sleep(3)
     # print(driver.page_source)
     # 等待元素出现
-    WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, 'graph-same-list-title')))
+    try:
+        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, 'graph-same-list-title')))
     # 获取所有的相同类名的元素
+    except TimeoutException:
+        print("graph-same-list-title 元素未在指定时间内出现在页面中。")
+        return htmls
     elements = driver.find_elements(By.CLASS_NAME, 'graph-same-list-title')
     # driver.page_source
     # 遍历这些元素

@@ -282,25 +282,26 @@ def i_soybeanharmful():
                         diseasename['count'] = diseasename['count'] + 1
             max_count_disease = max(diseasenames, key=lambda x: x['count'])
             print(max_count_disease)
-            sql_query = text(
-                "SELECT * FROM harmful.harmful_knowledges WHERE harmful_name LIKE'%{harmful_name}%'".format(
-                    harmful_name=max_count_disease['dname']))
-            result_q = connection.execute(sql_query)
-            rows = result_q.fetchall()
-            print('百度爬取返回病虫害！！！')
-            result = dict(rows[0])
-            result['predictions_value'] = round(random.uniform(0.6, 0.9), 3)
-            # 插入文件名识别的虫害
-            sql_insert = text(
-                "INSERT INTO harmful.newtable_md5 (harmful_name,alias,img_md5) VALUES ('{harmful_name}','{alias}','{img_md5}')".format(
-                    harmful_name=result['harmful_name'], alias=result['predictions_value'],
-                    img_md5=img_md5))
-            connection.execute(sql_insert)
-            del result['id']
-            del result['bz']
-            del result['alias']
-            return app.success([result])
-        # 模型识别
+            if max_count_disease['count'] != 0:
+                sql_query = text(
+                    "SELECT * FROM harmful.harmful_knowledges WHERE harmful_name LIKE'%{harmful_name}%'".format(
+                        harmful_name=max_count_disease['dname']))
+                result_q = connection.execute(sql_query)
+                rows = result_q.fetchall()
+                print('百度爬取返回病虫害！！！')
+                result = dict(rows[0])
+                result['predictions_value'] = round(random.uniform(0.6, 0.9), 3)
+                # 插入文件名识别的虫害
+                sql_insert = text(
+                    "INSERT INTO harmful.newtable_md5 (harmful_name,alias,img_md5) VALUES ('{harmful_name}','{alias}','{img_md5}')".format(
+                        harmful_name=result['harmful_name'], alias=result['predictions_value'],
+                        img_md5=img_md5))
+                connection.execute(sql_insert)
+                del result['id']
+                del result['bz']
+                del result['alias']
+                return app.success([result])
+            # 模型识别
         img_path = os.path.join(r'D:/', img_path).replace('\\', '/')
         class_names, predictions_values = idenftify_disease(img_path)
         print('class_name', class_names, predictions_values)

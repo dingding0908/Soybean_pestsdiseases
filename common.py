@@ -153,7 +153,7 @@ import time
 def Getdisease(img_path):
     htmls = []
     options = Options()
-    options.add_argument("--headless")  # 使用无头模式
+    # options.add_argument("--headless")  # 使用无头模式
     driver = webdriver.Chrome(options=options,executable_path=r"D:\Users\Programs\chromedriver-win64\chromedriver.exe")
     # 访问图片上传页面
     driver.get("https://graph.baidu.com/pcpage/index?tpl_from=pc")

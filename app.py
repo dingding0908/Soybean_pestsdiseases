@@ -28,7 +28,7 @@ app.__setattr__('get_all_params', get_all_params)
 db_url = 'mysql+pymysql://root:root@localhost:3306/harmful'
 engine = create_engine(db_url)
 connection = engine.connect()
-rf = Roboflow(api_key="spviZ9x8MGos0fIODPAC")
+rf = Roboflow(api_key="f1YbpgzeGLhcNwAc8Yz6")
 project = rf.workspace().project("waterrulesegment")
 model = project.version(4).model
 checkpoint_path = r"E:\Desktop\jupyter_data\test-5\checkpoints\test\RUN_20240524_174728_059218\average_model.pth"
